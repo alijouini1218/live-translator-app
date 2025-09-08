@@ -26,6 +26,8 @@
     "test:all": "npm run test:ci && npm run test:e2e"
   },
   "dependencies": {
+    "@live-translator/ui": "workspace:*",
+    "@live-translator/core": "workspace:*",
     "next": "14.2.15",
     "react": "18.3.1",
     "react-dom": "18.3.1",
