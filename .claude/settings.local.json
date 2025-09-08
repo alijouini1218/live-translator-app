@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm run:*)",
+      "mcp__vercel__list_projects",
+      "mcp__supabase__list_projects",
+      "mcp__stripe__get_stripe_account_info",
+      "mcp__supabase__list_organizations",
+      "mcp__stripe__create_product",
+      "mcp__stripe__create_price",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

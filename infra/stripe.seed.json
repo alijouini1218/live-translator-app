@@ -1,0 +1,87 @@
+{
+  "products": [
+    {
+      "id": "prod_live_translator_pro",
+      "name": "Live Translator Pro",
+      "description": "Unlimited real-time voice translation with premium features",
+      "metadata": {
+        "plan": "pro"
+      }
+    }
+  ],
+  "prices": [
+    {
+      "id": "price_live_translator_pro_monthly",
+      "product": "prod_live_translator_pro",
+      "unit_amount": 1999,
+      "currency": "usd",
+      "recurring": {
+        "interval": "month"
+      },
+      "metadata": {
+        "plan": "pro",
+        "interval": "monthly"
+      }
+    },
+    {
+      "id": "price_live_translator_pro_yearly",
+      "product": "prod_live_translator_pro", 
+      "unit_amount": 19999,
+      "currency": "usd",
+      "recurring": {
+        "interval": "year"
+      },
+      "metadata": {
+        "plan": "pro",
+        "interval": "yearly"
+      }
+    }
+  ],
+  "webhook_endpoints": [
+    {
+      "url": "https://your-app.vercel.app/api/stripe-webhook",
+      "enabled_events": [
+        "customer.subscription.created",
+        "customer.subscription.updated",
+        "customer.subscription.deleted",
+        "invoice.payment_succeeded",
+        "invoice.payment_failed"
+      ]
+    }
+  ],
+  "plans": {
+    "free": {
+      "name": "Free",
+      "description": "Try Live Translator with basic features",
+      "price": 0,
+      "features": [
+        "Up to 10 minutes per day",
+        "Basic language pairs",
+        "Standard voice quality"
+      ],
+      "limits": {
+        "daily_minutes": 10,
+        "concurrent_sessions": 1,
+        "history_retention_days": 7
+      }
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Unlimited professional translation",
+      "price": 19.99,
+      "features": [
+        "Unlimited translation time",
+        "All language pairs",
+        "Premium voice quality",
+        "Session history & export",
+        "Priority support",
+        "Custom glossaries"
+      ],
+      "limits": {
+        "daily_minutes": -1,
+        "concurrent_sessions": 5,
+        "history_retention_days": 365
+      }
+    }
+  }
+}

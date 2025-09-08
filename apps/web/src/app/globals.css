@@ -1,0 +1,145 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer base {
+  :root {
+    /* M7 Theme: Black headers, light grey backgrounds, black text */
+    --background: 0 0% 97%; /* Light grey background */
+    --foreground: 0 0% 0%; /* Black text */
+    --card: 0 0% 100%; /* White cards */
+    --card-foreground: 0 0% 0%; /* Black text on cards */
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 0% 0%; /* Black primary (headers) */
+    --primary-foreground: 0 0% 100%; /* White text on black */
+    --secondary: 0 0% 95%; /* Light grey secondary */
+    --secondary-foreground: 0 0% 0%; /* Black text on light grey */
+    --muted: 0 0% 92%; /* Muted grey */
+    --muted-foreground: 0 0% 40%; /* Grey text */
+    --accent: 0 0% 90%; /* Accent grey */
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 85%; /* Light grey borders */
+    --input: 0 0% 100%; /* White inputs */
+    --ring: 0 0% 0%; /* Black focus ring */
+    --radius: 0.5rem;
+    
+    /* Custom M7 variables */
+    --header-bg: 0 0% 0%; /* Black headers */
+    --header-text: 0 0% 100%; /* White text on headers */
+    --performance-excellent: 142 76% 36%; /* Green */
+    --performance-good: 45 93% 47%; /* Yellow */
+    --performance-poor: 0 84% 60%; /* Red */
+    --mic-active: 142 76% 36%; /* Green for active mic */
+    --mic-inactive: 0 0% 60%; /* Grey for inactive mic */
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* M7 Custom Components */
+  .header-black {
+    background: hsl(var(--header-bg));
+    color: hsl(var(--header-text));
+  }
+  
+  .performance-indicator {
+    @apply inline-flex items-center space-x-1 text-sm font-medium;
+  }
+  
+  .performance-excellent {
+    color: hsl(var(--performance-excellent));
+  }
+  
+  .performance-good {
+    color: hsl(var(--performance-good));
+  }
+  
+  .performance-poor {
+    color: hsl(var(--performance-poor));
+  }
+  
+  .mic-indicator {
+    @apply inline-flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all duration-200;
+  }
+  
+  .mic-indicator.active {
+    background: hsl(var(--mic-active) / 0.1);
+    border-color: hsl(var(--mic-active));
+    color: hsl(var(--mic-active));
+    animation: pulse-mic 2s infinite;
+  }
+  
+  .mic-indicator.inactive {
+    background: hsl(var(--mic-inactive) / 0.1);
+    border-color: hsl(var(--mic-inactive));
+    color: hsl(var(--mic-inactive));
+  }
+  
+  .consent-banner {
+    @apply fixed top-0 left-0 right-0 z-50 bg-black text-white p-4 shadow-lg;
+    backdrop-filter: blur(8px);
+  }
+  
+  .shortcut-key {
+    @apply inline-flex items-center justify-center min-w-6 h-6 px-2 text-xs font-mono bg-gray-100 text-gray-700 rounded border border-gray-300;
+  }
+  
+  @keyframes pulse-mic {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.1);
+    }
+  }
+  
+  @keyframes slide-down {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .slide-down {
+    animation: slide-down 0.3s ease-out;
+  }
+}
