@@ -2,10 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@live-translator/ui/components/button'
-import { SessionCard } from '@live-translator/ui/components/session-card'
-import { HistoryToggle } from '@live-translator/ui/components/history-toggle'
-import { ExportDialog } from '@live-translator/ui/components/export-dialog'
+import { Button, SessionCard, HistoryToggle, ExportDialog } from '@live-translator/ui'
 import { useSessionHistory } from '@/hooks/use-session-history'
 import { useExport } from '@/hooks/use-export'
 import { 

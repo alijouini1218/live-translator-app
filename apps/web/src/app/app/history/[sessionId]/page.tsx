@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@live-translator/ui/components/button'
-import { ExportDialog } from '@live-translator/ui/components/export-dialog'
+import { Button, ExportDialog } from '@live-translator/ui'
 import { useSessionDetail } from '@/hooks/use-session-history'
 import { useExport } from '@/hooks/use-export'
 import { 
