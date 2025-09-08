@@ -1,4 +1,4 @@
-import { Button } from '@live-translator/ui/components/button'
+import { Button } from '@live-translator/ui'
 import Link from 'next/link'
 
 export default function AuthErrorPage() {

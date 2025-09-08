@@ -1,4 +1,4 @@
-import { Button } from '@live-translator/ui/components/button'
+import { Button } from '@live-translator/ui'
 import { createClient } from '@/lib/supabase/server'
 import { EnhancedLiveTranslator } from '@/components/translator/enhanced-live-translator'
 import Link from 'next/link'

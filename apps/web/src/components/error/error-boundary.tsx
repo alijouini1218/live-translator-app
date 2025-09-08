@@ -1,7 +1,7 @@
 'use client'
 
 import { Component, ErrorInfo, ReactNode } from 'react'
-import { Button } from '@live-translator/ui/components/button'
+import { Button } from '@live-translator/ui'
 
 export interface ErrorDetails {
   error: Error

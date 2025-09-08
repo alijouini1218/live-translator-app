@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { Button } from '@live-translator/ui/components/button'
+import { Button } from '@live-translator/ui'
 
 export interface ShortcutAction {
   key: string

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Button } from '@live-translator/ui/components/button'
+import { Button } from '@live-translator/ui'
 
 interface ConsentBannerProps {
   onAccept: () => void

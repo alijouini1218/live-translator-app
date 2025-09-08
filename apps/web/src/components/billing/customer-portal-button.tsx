@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@live-translator/ui/components/button'
+import { Button } from '@live-translator/ui'
 
 export function CustomerPortalButton() {
   const [isLoading, setIsLoading] = useState(false)

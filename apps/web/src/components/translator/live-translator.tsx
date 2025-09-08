@@ -1,10 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Button } from '@live-translator/ui/components/button'
-import { AudioControls } from '@live-translator/ui/components/audio-controls'
-import { PTTControls } from '@live-translator/ui/components/ptt-controls'
-import { HistoryToggle } from '@live-translator/ui/components/history-toggle'
+import { Button, AudioControls, PTTControls, HistoryToggle } from '@live-translator/ui'
 import { LanguageSelector } from './language-selector'
 import { TranslationDisplay } from './translation-display'
 import { AudioVisualizer } from './audio-visualizer'

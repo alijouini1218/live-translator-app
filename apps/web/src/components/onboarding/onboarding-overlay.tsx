@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Button } from '@live-translator/ui/components/button'
+import { Button } from '@live-translator/ui'
 import { useOnboarding } from './onboarding-context'
 
 export function OnboardingOverlay() {

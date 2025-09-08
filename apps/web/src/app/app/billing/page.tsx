@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { Button } from '@live-translator/ui/components/button'
+import { Button } from '@live-translator/ui'
 import { CheckoutButton } from '@/components/billing/checkout-button'
 import { CustomerPortalButton } from '@/components/billing/customer-portal-button'
 
