@@ -17,27 +17,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get user profile with Stripe customer ID
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id as string)
-      .single()
-
-    if (!profile || !(profile as any).stripe_customer_id) {
-      return NextResponse.json(
-        { error: 'No subscription found' }, 
-        { status: 404 }
-      )
-    }
-
-    // Create customer portal session
-    const portalSession = await stripe.billingPortal.sessions.create({
-      customer: (profile as any).stripe_customer_id,
-      return_url: returnUrl || `${process.env.APP_BASE_URL}/app/billing`,
-    })
-
-    return NextResponse.json({ url: portalSession.url })
+    // TODO: Find Stripe customer by user ID from metadata
+    // For now, return error since we don't have stripe_customer_id stored
+    return NextResponse.json(
+      { error: 'Customer portal not available - no Stripe customer ID stored' }, 
+      { status: 404 }
+    )
   } catch (error: any) {
     console.error('Customer portal error:', error)
     return NextResponse.json(

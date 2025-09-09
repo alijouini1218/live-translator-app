@@ -21,34 +21,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get or create Stripe customer
-    let customer: any
-    
-    // First check if user already has a Stripe customer ID stored
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id as string)
-      .single()
-
-    if (profile && (profile as any).stripe_customer_id) {
-      // Customer exists in Stripe
-      customer = await stripe.customers.retrieve((profile as any).stripe_customer_id)
-    } else {
-      // Create new customer
-      customer = await stripe.customers.create({
-        email: user.email!,
-        metadata: {
-          supabase_user_id: user.id,
-        },
-      })
-
-      // Store customer ID in profile (you might need to add this column)
-      // await supabase
-      //   .from('profiles')
-      //   .update({ stripe_customer_id: customer.id })
-      //   .eq('id', user.id)
-    }
+    // Create Stripe customer for this checkout session
+    // TODO: Consider storing stripe_customer_id in profiles table for reuse
+    const customer = await stripe.customers.create({
+      email: user.email!,
+      metadata: {
+        supabase_user_id: user.id,
+      },
+    })
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({

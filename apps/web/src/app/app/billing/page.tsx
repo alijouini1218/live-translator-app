@@ -21,7 +21,7 @@ export default async function BillingPage() {
 
   const { data: profile } = user ? await supabase
     .from('profiles')
-    .select('*')
+    .select('id, plan, display_name, created_at, updated_at')
     .eq('id', user.id)
     .single() : { data: null }
 
