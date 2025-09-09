@@ -5,6 +5,9 @@ import { cookies } from 'next/headers'
 import { Database } from '@/lib/supabase/database.types'
 import { generateRealtimeSystemPrompt } from '@live-translator/core'
 
+// Force dynamic rendering for API routes that use cookies
+export const dynamic = 'force-dynamic'
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 })

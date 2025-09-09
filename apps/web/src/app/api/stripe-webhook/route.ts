@@ -3,17 +3,19 @@ import { stripe } from '@/lib/stripe/server'
 import { createClient } from '@supabase/supabase-js'
 import { Database } from '@/lib/supabase/database.types'
 
-// Use service role for webhook operations
-const supabaseAdmin = createClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  }
-)
+// Create Supabase client inside function to avoid build-time execution
+function getSupabaseAdmin() {
+  return createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    }
+  )
+}
 
 export async function POST(request: NextRequest) {
   const body = await request.text()
@@ -60,6 +62,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Update user profile
+        const supabaseAdmin = getSupabaseAdmin()
         const { error } = await supabaseAdmin
           .from('profiles')
           .update({ 
@@ -86,6 +89,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Downgrade to free plan
+        const supabaseAdmin = getSupabaseAdmin()
         const { error } = await supabaseAdmin
           .from('profiles')
           .update({ 

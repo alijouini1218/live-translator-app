@@ -3,6 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import { EnhancedLiveTranslator } from '@/components/translator/enhanced-live-translator'
 import Link from 'next/link'
 
+// Force dynamic rendering to avoid build-time Supabase client issues
+export const dynamic = 'force-dynamic'
+
 export default async function AppPage() {
   const supabase = createClient()
   

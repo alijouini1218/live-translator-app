@@ -2,6 +2,9 @@ import { Button } from "@live-translator/ui"
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
+// Force dynamic rendering to avoid build-time Supabase client issues
+export const dynamic = 'force-dynamic'
+
 export default async function Home() {
   const supabase = createClient()
   

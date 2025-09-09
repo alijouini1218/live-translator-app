@@ -3,6 +3,9 @@ import { Button } from '@live-translator/ui'
 import { CheckoutButton } from '@/components/billing/checkout-button'
 import { CustomerPortalButton } from '@/components/billing/customer-portal-button'
 
+// Force dynamic rendering to avoid build-time Supabase client issues
+export const dynamic = 'force-dynamic'
+
 // Price IDs from Stripe (these should match your actual Stripe price IDs)
 const PRICE_IDS = {
   PRO_MONTHLY: process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1234567890', // Replace with actual price ID

@@ -2,6 +2,9 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AppLayoutWrapper } from '@/components/layout/app-layout-wrapper'
 
+// Force dynamic rendering to avoid build-time Supabase client issues
+export const dynamic = 'force-dynamic'
+
 export default async function AppLayout({
   children,
 }: {
