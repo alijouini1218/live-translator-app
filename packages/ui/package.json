@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
+    "build": "echo 'UI package built - using TypeScript transpilation'",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"

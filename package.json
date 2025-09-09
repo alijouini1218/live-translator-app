@@ -7,12 +7,14 @@
     "dev": "pnpm --filter web dev",
     "dev:web": "pnpm --filter web dev",
     "dev:mobile": "pnpm --filter mobile start",
-    "build": "pnpm --filter web build",
-    "build:web": "pnpm --filter web build",
+    "build": "pnpm build:packages && pnpm --filter web build",
+    "build:web": "pnpm build:packages && pnpm --filter web build",
+    "build:packages": "pnpm --filter @live-translator/core build && pnpm --filter @live-translator/ui build",
     "lint": "pnpm -r lint",
-    "typecheck": "pnpm -r typecheck",
+    "typecheck": "pnpm -r typecheck", 
     "test": "pnpm -r test",
-    "clean": "pnpm -r clean"
+    "clean": "pnpm -r clean",
+    "vercel-build": "pnpm build:web"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",

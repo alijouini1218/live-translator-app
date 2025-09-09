@@ -127,3 +127,4 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+.vercel
