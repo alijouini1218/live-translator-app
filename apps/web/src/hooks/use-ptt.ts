@@ -289,7 +289,7 @@ export function usePTT({
 
       // Convert to base64
       const arrayBuffer = await audioBlob.arrayBuffer()
-      const base64Audio = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
+      const base64Audio = btoa(String.fromCharCode(...Array.from(new Uint8Array(arrayBuffer))))
 
       console.log(`Sending PTT request: ${sourceLanguage} -> ${targetLanguage}, size: ${audioBlob.size} bytes`)
 

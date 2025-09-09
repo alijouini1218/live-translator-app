@@ -90,17 +90,17 @@ export function useExport() {
         .from('sessions')
         .select('*')
         .eq('id', sessionId)
-        .single()
+        .single() as { data: Session | null, error: any }
 
-      if (sessionError) throw sessionError
+      if (sessionError || !session) throw sessionError || new Error('Session not found')
 
       const { data: transcripts, error: transcriptsError } = await supabase
         .from('transcripts')
         .select('*')
         .eq('session_id', sessionId)
-        .order('t0_ms', { ascending: true })
+        .order('t0_ms', { ascending: true }) as { data: Transcript[] | null, error: any }
 
-      if (transcriptsError) throw transcriptsError
+      if (transcriptsError || !transcripts) throw transcriptsError || new Error('Transcripts not found')
 
       // Generate filename
       const date = new Date(session.created_at)
@@ -234,15 +234,15 @@ export function useExport() {
         .from('sessions')
         .select('*')
         .in('id', sessionIds)
-        .order('created_at', { ascending: true })
+        .order('created_at', { ascending: true }) as { data: Session[] | null, error: any }
 
-      if (sessionsError) throw sessionsError
+      if (sessionsError || !sessions) throw sessionsError || new Error('Sessions not found')
 
       const { data: allTranscripts, error: transcriptsError } = await supabase
         .from('transcripts')
         .select('*')
         .in('session_id', sessionIds)
-        .order('session_id, t0_ms', { ascending: true })
+        .order('session_id, t0_ms', { ascending: true }) as { data: Transcript[] | null, error: any }
 
       if (transcriptsError) throw transcriptsError
 
@@ -402,7 +402,7 @@ export function useExport() {
         .select('id')
         .eq('user_id', user.id)
         .gte('created_at', startDate.toISOString())
-        .lte('created_at', endDate.toISOString())
+        .lte('created_at', endDate.toISOString()) as { data: Pick<Session, 'id'>[] | null, error: any }
 
       if (error) throw error
 

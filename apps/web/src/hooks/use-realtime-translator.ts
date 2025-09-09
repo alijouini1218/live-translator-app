@@ -39,7 +39,12 @@ export function useRealtimeTranslator({
   const mediaStreamRef = useRef<MediaStream | null>(null)
   const processorRef = useRef<ScriptProcessorNode | null>(null)
   const latencyTracker = useRef(new LatencyTracker())
-  const phraseAggregator = useRef(new PhraseAggregator())
+  const phraseAggregator = useRef(new PhraseAggregator((completePhrase) => {
+    setState(prev => ({ 
+      ...prev, 
+      targetText: prev.targetText + ' ' + completePhrase 
+    }))
+  }))
 
   // Cleanup function
   const cleanup = useCallback(() => {
@@ -156,7 +161,7 @@ export function useRealtimeTranslator({
         }, 3000)
       }, 1000)
 
-      ws.onmessage = (event) => {
+      ws.onmessage = (event: MessageEvent) => {
         const data = JSON.parse(event.data)
         
         switch (data.type) {
@@ -183,15 +188,7 @@ export function useRealtimeTranslator({
             
           case 'response.text.delta':
             // Handle partial translation text
-            phraseAggregator.current.processPartial(
-              data.delta, 
-              (completePhrase) => {
-                setState(prev => ({ 
-                  ...prev, 
-                  targetText: prev.targetText + ' ' + completePhrase 
-                }))
-              }
-            )
+            phraseAggregator.current.addPartial(data.delta)
             break
             
           case 'response.done':
@@ -211,7 +208,7 @@ export function useRealtimeTranslator({
         }
       }
 
-      ws.onerror = (error) => {
+      ws.onerror = (error: Event) => {
         console.error('WebSocket error:', error)
         setState(prev => ({ 
           ...prev, 

@@ -9,7 +9,7 @@ import { useRealtimeTranslator } from '@/hooks/use-realtime-translator'
 import { useTTS } from '@/hooks/use-tts'
 import { usePTT } from '@/hooks/use-ptt'
 import { useSessionManager } from '@/hooks/use-session-history'
-import { createPhraseAggregator } from '@live-translator/core/phrase-aggregator'
+import { createPhraseAggregator } from '@live-translator/core'
 
 interface LiveTranslatorProps {
   className?: string
@@ -78,7 +78,7 @@ export function LiveTranslator({ className = '' }: LiveTranslatorProps) {
       // Calculate connection quality and check for auto-switching
       if (metrics.total_latency_ms) {
         const rtt = metrics.webrtc_connection_ms || metrics.total_latency_ms
-        const quality = rtt < 150 ? 'excellent' : rtt < 250 ? 'good' : 'poor'
+        const quality: 'excellent' | 'good' | 'poor' = rtt < 150 ? 'excellent' : rtt < 250 ? 'good' : 'poor'
         
         const newConnectionMetrics = {
           rtt,
@@ -250,7 +250,7 @@ export function LiveTranslator({ className = '' }: LiveTranslatorProps) {
           const session = await startSession(
             sourceLanguage,
             targetLanguage,
-            mode
+            mode === 'realtime' ? 'live' : 'ptt'
           )
           if (session) {
             setSessionStartTime(Date.now())

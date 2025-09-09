@@ -13,7 +13,7 @@ interface SessionFilters {
   dateTo?: Date
   sourceLanguage?: string
   targetLanguage?: string
-  mode?: 'live' | 'ptt'
+  mode?: 'live' | 'ptt' | 'all'
   search?: string
 }
 
@@ -341,8 +341,8 @@ export function useSessionManager() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return null
 
-      const { data: session, error } = await supabase
-        .from('sessions')
+      const { data: session, error } = await (supabase
+        .from('sessions') as any)
         .insert({
           user_id: user.id,
           source_lang: sourceLanguage === 'auto' ? null : sourceLanguage,
@@ -353,7 +353,7 @@ export function useSessionManager() {
           cost_cents: 0
         })
         .select()
-        .single()
+        .single() as { data: Session | null, error: any }
 
       if (error) throw error
 
@@ -370,8 +370,8 @@ export function useSessionManager() {
     if (!currentSession) return
 
     try {
-      const { error } = await supabase
-        .from('sessions')
+      const { error } = await (supabase
+        .from('sessions') as any)
         .update({
           ended_at: new Date().toISOString(),
           duration_ms: Date.now() - new Date(currentSession.started_at).getTime()
@@ -396,8 +396,8 @@ export function useSessionManager() {
     if (!currentSession || !historyEnabled) return
 
     try {
-      const { data: transcript, error } = await supabase
-        .from('transcripts')
+      const { data: transcript, error } = await (supabase
+        .from('transcripts') as any)
         .insert({
           session_id: currentSession.id,
           t0_ms: t0Ms,
@@ -412,8 +412,8 @@ export function useSessionManager() {
 
       // Update session character count
       const characterCount = (sourceText.length + targetText.length)
-      await supabase
-        .from('sessions')
+      await (supabase
+        .from('sessions') as any)
         .update({
           characters: currentSession.characters + characterCount
         })
