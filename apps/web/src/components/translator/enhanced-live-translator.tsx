@@ -164,7 +164,7 @@ export function EnhancedLiveTranslator({ className = '' }: EnhancedLiveTranslato
         setPerformanceMetrics(prev => ({
           ...prev,
           sessionDuration: Date.now() - sessionStartRef.current!,
-          volumeLevel: audioLevel,
+          volumeLevel: audioLevel, // Access current audioLevel via closure
           audioQuality: Math.random() * 0.3 + 0.7, // Simulated - would be real metric
           noiseLevel: Math.random() * 0.2, // Simulated - would be real metric
           timestamp: Date.now()
@@ -173,9 +173,23 @@ export function EnhancedLiveTranslator({ className = '' }: EnhancedLiveTranslato
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [audioLevel])
+  }, []) // Remove audioLevel dependency to prevent interval recreation
 
-  // Keyboard shortcuts
+  // Handle clearing translation - Memoized to prevent re-renders
+  const handleClearTranslation = useCallback(() => {
+    if (mode === 'realtime') {
+      clearTranslation()
+    }
+    
+    if (ptt.hasResults) {
+      ptt.clearResults()
+    }
+    
+    stopTTS()
+    clearQueue()
+  }, [mode, clearTranslation, ptt.hasResults, ptt.clearResults, stopTTS, clearQueue])
+
+  // Keyboard shortcuts - Fixed: removed circular dependencies
   useEffect(() => {
     const translatorShortcuts = [
       commonShortcuts.spacePTT(() => {
@@ -196,19 +210,19 @@ export function EnhancedLiveTranslator({ className = '' }: EnhancedLiveTranslato
         key: 'h',
         description: 'Toggle help panel',
         category: 'general' as const,
-        action: () => setShowHelp(!showHelp)
+        action: () => setShowHelp(prev => !prev)
       },
       
       {
         key: 'p',
         description: 'Toggle performance dashboard',
         category: 'general' as const,
-        action: () => setShowPerformance(!showPerformance)
+        action: () => setShowPerformance(prev => !prev)
       }
     ]
 
     addShortcuts(translatorShortcuts)
-  }, [addShortcuts, mode, ptt, showHelp, showPerformance])
+  }, [addShortcuts, mode, ptt, handleClearTranslation])
 
   // Onboarding trigger for first-time users
   useEffect(() => {
@@ -243,19 +257,6 @@ export function EnhancedLiveTranslator({ className = '' }: EnhancedLiveTranslato
         }
       }
     }
-  }
-
-  const handleClearTranslation = () => {
-    if (mode === 'realtime') {
-      clearTranslation()
-    }
-    
-    if (ptt.hasResults) {
-      ptt.clearResults()
-    }
-    
-    stopTTS()
-    clearQueue()
   }
 
   return (
