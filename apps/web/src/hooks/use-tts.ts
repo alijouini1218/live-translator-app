@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { AudioState, TTSConfig, TTSMetrics } from '@live-translator/core/types';
-import { getBestVoiceForLanguage } from '@live-translator/core/languages';
+import { AudioState, TTSConfig, TTSMetrics, getBestVoiceForLanguage } from '@live-translator/core';
 
 interface UseTTSOptions {
   languageCode: string;
