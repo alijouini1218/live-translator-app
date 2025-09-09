@@ -43,7 +43,8 @@
       "Bash(vercel logs:*)",
       "mcp__vercel__web_fetch_vercel_url",
       "Bash(npx tsc:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(del:*)"
     ],
     "deny": [],
     "ask": []

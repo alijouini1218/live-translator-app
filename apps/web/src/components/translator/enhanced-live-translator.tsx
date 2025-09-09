@@ -24,6 +24,7 @@ interface EnhancedLiveTranslatorProps {
 type TranslationMode = 'realtime' | 'ptt'
 
 export function EnhancedLiveTranslator({ className = '' }: EnhancedLiveTranslatorProps) {
+  const [isInitialized, setIsInitialized] = useState(false)
   const [sourceLanguage, setSourceLanguage] = useState('auto')
   const [targetLanguage, setTargetLanguage] = useState('es')
   const [mode, setMode] = useState<TranslationMode>('realtime')
@@ -59,6 +60,11 @@ export function EnhancedLiveTranslator({ className = '' }: EnhancedLiveTranslato
   const { shortcuts, addShortcuts } = useKeyboardShortcuts()
   const { status: micStatus, requestPermission } = useMicrophonePermission()
   const { startOnboarding, state: onboardingState } = useOnboarding()
+
+  // Initialize component after mount to prevent hydration issues
+  useEffect(() => {
+    setIsInitialized(true)
+  }, [])
 
   // Session management for history
   const {
@@ -257,6 +263,19 @@ export function EnhancedLiveTranslator({ className = '' }: EnhancedLiveTranslato
         }
       }
     }
+  }
+
+  // Show loading state during hydration
+  if (!isInitialized) {
+    return (
+      <div className={`space-y-6 ${className}`}>
+        <div className="bg-card rounded-lg border border-border p-6 animate-pulse">
+          <div className="h-6 bg-muted rounded w-32 mb-4"></div>
+          <div className="h-4 bg-muted rounded w-full mb-2"></div>
+          <div className="h-4 bg-muted rounded w-3/4"></div>
+        </div>
+      </div>
+    )
   }
 
   return (

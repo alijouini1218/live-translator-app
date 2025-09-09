@@ -2,6 +2,7 @@ import { Button } from '@live-translator/ui'
 import { createClient } from '@/lib/supabase/server'
 import { EnhancedLiveTranslator } from '@/components/translator/enhanced-live-translator'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 // Force dynamic rendering to avoid build-time Supabase client issues
 export const dynamic = 'force-dynamic'
@@ -9,15 +10,30 @@ export const dynamic = 'force-dynamic'
 export default async function AppPage() {
   const supabase = createClient()
   
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user, profile
+  
+  try {
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser()
+    
+    user = authUser
+    
+    if (!user) {
+      redirect('/auth')
+    }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user?.id || '')
-    .single()
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single()
+    
+    profile = profileData
+  } catch (error) {
+    console.error('App page auth error:', error)
+    redirect('/auth')
+  }
 
   return (
     <div className="space-y-8">
@@ -29,7 +45,7 @@ export default async function AppPage() {
         <p className="mt-4 text-lg text-muted-foreground">
           Real-time voice-to-voice translation with advanced features
         </p>
-        {(profile as any)?.plan === 'free' && (
+        {profile?.plan === 'free' && (
           <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <p className="text-sm text-yellow-800">
               You're on the free plan (10 minutes/day). 

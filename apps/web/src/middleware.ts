@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server'
 import { Database } from '@/lib/supabase/database.types'
 
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
+  let response = NextResponse.next({
     request,
   })
 
@@ -17,41 +17,39 @@ export async function middleware(request: NextRequest) {
           return request.cookies.get(name)?.value
         },
         set(name: string, value: string, options: any) {
-          request.cookies.set(name, value)
-          supabaseResponse = NextResponse.next({
-            request,
-          })
-          supabaseResponse.cookies.set(name, value, options)
+          response.cookies.set(name, value, options)
         },
         remove(name: string, options: any) {
-          request.cookies.set(name, '')
-          supabaseResponse = NextResponse.next({
-            request,
-          })
-          supabaseResponse.cookies.set(name, '', options)
+          response.cookies.set(name, '', { ...options, maxAge: 0 })
         },
       },
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
 
-  // If user is not signed in and is trying to access protected routes
-  if (!user && request.nextUrl.pathname.startsWith('/app')) {
-    const redirectUrl = new URL('/auth', request.url)
-    return NextResponse.redirect(redirectUrl)
+    // If user is not signed in and is trying to access protected routes
+    if (!user && request.nextUrl.pathname.startsWith('/app')) {
+      const redirectUrl = new URL('/auth', request.url)
+      return NextResponse.redirect(redirectUrl)
+    }
+
+    // If user is signed in and is trying to access auth pages
+    if (user && (
+      request.nextUrl.pathname.startsWith('/auth') &&
+      !request.nextUrl.pathname.startsWith('/auth/callback')
+    )) {
+      const redirectUrl = new URL('/app', request.url)
+      return NextResponse.redirect(redirectUrl)
+    }
+  } catch (error) {
+    console.error('Middleware auth check error:', error)
+    // On auth error, allow the request to continue
+    // The page components will handle the unauthenticated state
   }
 
-  // If user is signed in and is trying to access auth pages
-  if (user && (
-    request.nextUrl.pathname.startsWith('/auth') &&
-    !request.nextUrl.pathname.startsWith('/auth/callback')
-  )) {
-    const redirectUrl = new URL('/app', request.url)
-    return NextResponse.redirect(redirectUrl)
-  }
-
-  return supabaseResponse
+  return response
 }
 
 export const config = {

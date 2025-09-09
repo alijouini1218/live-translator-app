@@ -9,39 +9,32 @@ export async function GET(request: NextRequest) {
   const next = searchParams.get('next') ?? '/app'
 
   if (code) {
-    const cookieStore = cookies()
+    let response = NextResponse.redirect(`${origin}${next}`)
+    
     const supabase = createServerClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
           get(name: string) {
-            return cookieStore.get(name)?.value
+            return request.cookies.get(name)?.value
           },
           set(name: string, value: string, options: CookieOptions) {
-            try {
-              cookieStore.set({ name, value, ...options })
-            } catch (error) {
-              // Handle Server Component cookie setting errors
-              console.error('Cookie setting error:', error)
-            }
+            response.cookies.set(name, value, options)
           },
           remove(name: string, options: CookieOptions) {
-            try {
-              cookieStore.delete({ name, ...options })
-            } catch (error) {
-              console.error('Cookie removal error:', error)
-            }
+            response.cookies.set(name, '', { ...options, maxAge: 0 })
           },
         },
       }
     )
 
     try {
-      const { error } = await supabase.auth.exchangeCodeForSession(code)
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code)
       
-      if (!error) {
-        return NextResponse.redirect(`${origin}${next}`)
+      if (!error && data?.session) {
+        console.log('Authentication successful, redirecting to:', next)
+        return response
       } else {
         console.error('Auth exchange error:', error)
         return NextResponse.redirect(`${origin}/auth/error`)
