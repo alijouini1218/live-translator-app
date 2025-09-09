@@ -37,6 +37,7 @@ export function AuthButton({ variant = 'signin' }: AuthButtonProps) {
         email,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
+          shouldCreateUser: true,
         },
       })
 

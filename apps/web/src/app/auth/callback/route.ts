@@ -6,14 +6,27 @@ import { Database } from '@/lib/supabase/database.types'
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
+  const error = searchParams.get('error')
+  const errorDescription = searchParams.get('error_description')
   const next = searchParams.get('next') ?? '/app'
 
   console.log('Auth callback received:', { 
     code: code ? `${code.substring(0, 20)}...` : 'missing',
+    error,
+    errorDescription,
     next,
     origin,
-    userAgent: request.headers.get('user-agent')?.substring(0, 100)
+    userAgent: request.headers.get('user-agent')?.substring(0, 100),
+    allParams: Object.fromEntries(searchParams.entries())
   })
+
+  // Handle error from auth provider
+  if (error) {
+    console.error('Auth provider returned error:', { error, errorDescription })
+    return NextResponse.redirect(
+      `${origin}/auth/error?error=${error}&error_description=${encodeURIComponent(errorDescription || 'Authentication failed')}`
+    )
+  }
 
   // Check if Supabase is configured
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
