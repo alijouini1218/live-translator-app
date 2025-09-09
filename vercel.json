@@ -1,15 +1,47 @@
 {
   "version": 2,
-  "builds": [
+  "buildCommand": "pnpm vercel-build",
+  "outputDirectory": "apps/web/.next",
+  "installCommand": "pnpm install",
+  "framework": "nextjs",
+  "functions": {
+    "apps/web/src/app/api/ephemeral-session/route.ts": {
+      "runtime": "nodejs18.x"
+    },
+    "apps/web/src/app/api/tts/route.ts": {
+      "runtime": "edge"
+    },
+    "apps/web/src/app/api/ptt/route.ts": {
+      "runtime": "edge"
+    },
+    "apps/web/src/app/api/checkout/route.ts": {
+      "runtime": "nodejs18.x"
+    },
+    "apps/web/src/app/api/stripe-webhook/route.ts": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "headers": [
     {
-      "src": "apps/web/package.json",
-      "use": "@vercel/next",
-      "config": {
-        "distDir": ".next"
-      }
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
     }
   ],
-  "installCommand": "corepack enable pnpm && pnpm install --no-frozen-lockfile",
-  "buildCommand": "pnpm build:packages && pnpm --filter web build",
-  "outputDirectory": "apps/web/.next"
+  "env": {
+    "PNPM_FLAGS": "--shamefully-hoist"
+  },
+  "ignoreCommand": "if [ \"$VERCEL_GIT_COMMIT_REF\" != \"main\" ] && [ \"$VERCEL_GIT_COMMIT_REF\" != \"master\" ]; then exit 0; else exit 1; fi"
 }

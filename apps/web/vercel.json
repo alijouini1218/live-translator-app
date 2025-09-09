@@ -1,6 +1,0 @@
-{
-  "buildCommand": "cd ../.. && pnpm build:packages && cd apps/web && pnpm build",
-  "installCommand": "cd ../.. && corepack enable pnpm && pnpm install --no-frozen-lockfile",
-  "outputDirectory": ".next",
-  "framework": "nextjs"
-}
