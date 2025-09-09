@@ -3,15 +3,8 @@ import { NextRequest } from 'next/server'
 import { mockSupabaseClient } from '../utils/mocks'
 
 // Mock dependencies
-jest.mock('@supabase/auth-helpers-nextjs', () => ({
-  createRouteHandlerClient: () => mockSupabaseClient,
-}))
-
-jest.mock('next/headers', () => ({
-  cookies: () => ({
-    get: jest.fn(),
-    set: jest.fn(),
-  }),
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: () => mockSupabaseClient,
 }))
 
 describe('/auth/callback', () => {

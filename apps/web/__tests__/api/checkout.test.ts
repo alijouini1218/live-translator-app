@@ -19,15 +19,8 @@ jest.mock('@/lib/stripe/server', () => ({
   stripe: mockStripe,
 }))
 
-jest.mock('@supabase/auth-helpers-nextjs', () => ({
-  createRouteHandlerClient: () => mockSupabaseClient,
-}))
-
-jest.mock('next/headers', () => ({
-  cookies: () => ({
-    get: jest.fn(),
-    set: jest.fn(),
-  }),
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: () => mockSupabaseClient,
 }))
 
 describe('/api/checkout', () => {

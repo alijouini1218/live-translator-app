@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
-import { Database } from '@/lib/supabase/database.types'
+import { createClient } from '@/lib/supabase/server'
 import { generateRealtimeSystemPrompt } from '@live-translator/core'
 
 // Force dynamic rendering for API routes that use cookies
@@ -15,10 +13,7 @@ const openai = new OpenAI({
 export async function GET(request: NextRequest) {
   try {
     // Get authenticated user
-    const cookieStore = cookies()
-    const supabase = createRouteHandlerClient<Database>({ 
-      cookies: () => cookieStore 
-    })
+    const supabase = createClient()
     
     const {
       data: { user },

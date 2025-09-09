@@ -8,15 +8,8 @@ jest.mock('openai', () => ({
   default: jest.fn(() => mockOpenAIClient),
 }))
 
-jest.mock('@supabase/auth-helpers-nextjs', () => ({
-  createRouteHandlerClient: () => mockSupabaseClient,
-}))
-
-jest.mock('next/headers', () => ({
-  cookies: () => ({
-    get: jest.fn(),
-    set: jest.fn(),
-  }),
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: () => mockSupabaseClient,
 }))
 
 jest.mock('@live-translator/core', () => ({

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button } from '@live-translator/ui'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { User } from '@supabase/auth-helpers-nextjs'
+import type { User } from '@supabase/supabase-js'
 
 interface UserAvatarProps {
   user: User

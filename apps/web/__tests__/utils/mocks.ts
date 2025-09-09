@@ -7,6 +7,7 @@ export const mockSupabaseClient = {
     getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
     signInWithOtp: jest.fn().mockResolvedValue({ data: {}, error: null }),
     signOut: jest.fn().mockResolvedValue({ error: null }),
+    exchangeCodeForSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
     onAuthStateChange: jest.fn().mockReturnValue({
       data: { subscription: { unsubscribe: jest.fn() } },
     }),
