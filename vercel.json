@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "apps/web/package.json",
+      "use": "@vercel/next",
+      "config": {
+        "buildCommand": "cd ../.. && pnpm build",
+        "installCommand": "cd ../.. && pnpm install",
+        "outputDirectory": "apps/web/.next"
+      }
+    }
+  ],
+  "functions": {
+    "apps/web/api/**/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  }
+}
