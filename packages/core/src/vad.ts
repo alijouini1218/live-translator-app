@@ -67,7 +67,7 @@ export interface VADEvents {
 export class VADProcessor {
   private config: VADConfig;
   private events: Partial<VADEvents>;
-  
+
   // State tracking
   private isSpeaking = false;
   private speechFrameCount = 0;
@@ -82,7 +82,10 @@ export class VADProcessor {
   private zcrHistory: number[] = [];
   private readonly HISTORY_SIZE = 10;
 
-  constructor(config: Partial<VADConfig> = {}, events: Partial<VADEvents> = {}) {
+  constructor(
+    config: Partial<VADConfig> = {},
+    events: Partial<VADEvents> = {}
+  ) {
     this.config = { ...DEFAULT_VAD_CONFIG, ...config };
     this.events = events;
   }
@@ -93,18 +96,20 @@ export class VADProcessor {
   processFrame(audioData: Float32Array, timestamp: number): VADResult {
     const energy = this.calculateEnergy(audioData);
     const zcr = this.calculateZCR(audioData);
-    
+
     // Update history
     this.energyHistory.push(energy);
     this.zcrHistory.push(zcr);
-    
+
     if (this.energyHistory.length > this.HISTORY_SIZE) {
       this.energyHistory.shift();
       this.zcrHistory.shift();
     }
 
     // Calculate adaptive thresholds
-    const adaptiveEnergyThreshold = this.getAdaptiveThreshold(this.energyHistory);
+    const adaptiveEnergyThreshold = this.getAdaptiveThreshold(
+      this.energyHistory
+    );
     const adaptiveZCRThreshold = this.config.zcrThreshold;
 
     // Determine if current frame contains speech
@@ -123,11 +128,15 @@ export class VADProcessor {
     }
 
     // Check for speech start
-    if (!this.isSpeaking && this.speechFrameCount >= this.config.speechStartFrames) {
+    if (
+      !this.isSpeaking &&
+      this.speechFrameCount >= this.config.speechStartFrames
+    ) {
       this.isSpeaking = true;
-      this.speechStartTime = timestamp - (this.config.speechStartFrames * this.getFrameDuration());
+      this.speechStartTime =
+        timestamp - this.config.speechStartFrames * this.getFrameDuration();
       this.events.onSpeechStart?.(this.speechStartTime);
-      
+
       // Start buffering audio with pre-roll
       this.audioBuffer = [];
       this.addPreRoll(timestamp);
@@ -138,19 +147,20 @@ export class VADProcessor {
       const silenceDuration = timestamp - this.lastSpeechTime;
       const speechDuration = timestamp - this.speechStartTime;
 
-      if (this.silenceFrameCount >= this.config.speechEndFrames || 
-          silenceDuration > this.config.maxSilenceDuration) {
-        
+      if (
+        this.silenceFrameCount >= this.config.speechEndFrames ||
+        silenceDuration > this.config.maxSilenceDuration
+      ) {
         // Only end speech if minimum duration is met
         if (speechDuration >= this.config.minSpeechDuration) {
           this.isSpeaking = false;
           this.events.onSpeechEnd?.(timestamp, speechDuration);
-          
+
           // Emit audio chunk with post-roll
           this.addPostRoll(timestamp);
           this.emitAudioChunk(timestamp);
         }
-        
+
         this.resetCounters();
       }
     }
@@ -161,11 +171,20 @@ export class VADProcessor {
     }
 
     // Calculate current durations
-    const currentSpeechDuration = this.isSpeaking ? timestamp - this.speechStartTime : 0;
-    const currentSilenceDuration = this.isSpeaking ? 0 : timestamp - this.lastSpeechTime;
+    const currentSpeechDuration = this.isSpeaking
+      ? timestamp - this.speechStartTime
+      : 0;
+    const currentSilenceDuration = this.isSpeaking
+      ? 0
+      : timestamp - this.lastSpeechTime;
 
     // Calculate confidence score
-    const confidence = this.calculateConfidence(energy, zcr, adaptiveEnergyThreshold, adaptiveZCRThreshold);
+    const confidence = this.calculateConfidence(
+      energy,
+      zcr,
+      adaptiveEnergyThreshold,
+      adaptiveZCRThreshold
+    );
 
     const result: VADResult = {
       isSpeaking: this.isSpeaking,
@@ -199,7 +218,7 @@ export class VADProcessor {
   private calculateZCR(audioData: Float32Array): number {
     let crossings = 0;
     for (let i = 1; i < audioData.length; i++) {
-      if ((audioData[i] >= 0) !== (audioData[i - 1] >= 0)) {
+      if (audioData[i] >= 0 !== audioData[i - 1] >= 0) {
         crossings++;
       }
     }
@@ -211,11 +230,13 @@ export class VADProcessor {
    */
   private getAdaptiveThreshold(history: number[]): number {
     if (history.length === 0) return this.config.energyThreshold;
-    
+
     const mean = history.reduce((sum, val) => sum + val, 0) / history.length;
-    const variance = history.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / history.length;
+    const variance =
+      history.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) /
+      history.length;
     const stdDev = Math.sqrt(variance);
-    
+
     // Adaptive threshold is mean + 2 standard deviations, but not less than config threshold
     return Math.max(this.config.energyThreshold, mean + 2 * stdDev);
   }
@@ -224,9 +245,9 @@ export class VADProcessor {
    * Calculate confidence score for speech detection
    */
   private calculateConfidence(
-    energy: number, 
-    zcr: number, 
-    energyThreshold: number, 
+    energy: number,
+    zcr: number,
+    energyThreshold: number,
     zcrThreshold: number
   ): number {
     const energyScore = Math.min(1, energy / energyThreshold);
@@ -264,9 +285,12 @@ export class VADProcessor {
     if (this.audioBuffer.length === 0) return;
 
     // Concatenate all buffered audio frames
-    const totalSamples = this.audioBuffer.reduce((sum, frame) => sum + frame.length, 0);
+    const totalSamples = this.audioBuffer.reduce(
+      (sum, frame) => sum + frame.length,
+      0
+    );
     const combinedAudio = new Float32Array(totalSamples);
-    
+
     let offset = 0;
     for (const frame of this.audioBuffer) {
       combinedAudio.set(frame, offset);
@@ -337,8 +361,8 @@ export const VADUtils = {
    * Convert audio data to the specified sample rate
    */
   resampleAudio(
-    audioData: Float32Array, 
-    fromSampleRate: number, 
+    audioData: Float32Array,
+    fromSampleRate: number,
     toSampleRate: number
   ): Float32Array {
     if (fromSampleRate === toSampleRate) {
@@ -355,8 +379,9 @@ export const VADUtils = {
       const srcIndexCeil = Math.min(srcIndexFloor + 1, audioData.length - 1);
       const fraction = srcIndex - srcIndexFloor;
 
-      resampled[i] = audioData[srcIndexFloor] * (1 - fraction) + 
-                     audioData[srcIndexCeil] * fraction;
+      resampled[i] =
+        audioData[srcIndexFloor] * (1 - fraction) +
+        audioData[srcIndexCeil] * fraction;
     }
 
     return resampled;
@@ -386,7 +411,7 @@ export const VADUtils = {
 
     const normalized = new Float32Array(audioData.length);
     const scale = 0.95 / max; // Leave some headroom
-    
+
     for (let i = 0; i < audioData.length; i++) {
       normalized[i] = audioData[i] * scale;
     }

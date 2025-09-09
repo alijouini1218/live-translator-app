@@ -40,7 +40,7 @@ export class PhraseAggregator {
 
     // Clean and normalize the input
     const cleanText = partialText.trim();
-    
+
     // Update buffer with new content
     // Handle both incremental and replacement scenarios
     if (this.state.buffer && cleanText.startsWith(this.state.buffer)) {
@@ -120,7 +120,10 @@ export class PhraseAggregator {
     if (timeSinceLastEmit > PHRASE_TIMEOUT_MS / 2) {
       this.timeoutId = setTimeout(() => {
         if (this.state.buffer.trim() && !this.state.isProcessing) {
-          console.log('Emitting due to timeout:', this.state.buffer.slice(0, 30));
+          console.log(
+            'Emitting due to timeout:',
+            this.state.buffer.slice(0, 30)
+          );
           this.emitPhrase(this.state.buffer.trim());
         }
       }, PHRASE_TIMEOUT_MS / 2);
@@ -139,7 +142,8 @@ export class PhraseAggregator {
    */
   private hasNaturalPause(text: string): boolean {
     // Look for commas, semicolons, colons, or conjunctions
-    const pauseIndicators = /[,;:]|\b(and|but|or|so|then|however|meanwhile|therefore)\b/i;
+    const pauseIndicators =
+      /[,;:]|\b(and|but|or|so|then|however|meanwhile|therefore)\b/i;
     return pauseIndicators.test(text);
   }
 
@@ -153,7 +157,7 @@ export class PhraseAggregator {
 
     this.state.isProcessing = true;
     this.state.lastEmitTime = performance.now();
-    
+
     // Clear buffer and timeout
     this.state.buffer = '';
     this.clearTimeout();
@@ -197,11 +201,16 @@ export class PhraseAggregator {
 let globalBuffer = '';
 let globalLastEmit = 0;
 
-export function onPartialTranscript(part: string, speak: (text: string) => void): void {
+export function onPartialTranscript(
+  part: string,
+  speak: (text: string) => void
+): void {
   globalBuffer += part;
   const now = performance.now();
-  const emit = PHRASE_ENDINGS.test(globalBuffer.trim()) || now - globalLastEmit > PHRASE_TIMEOUT_MS;
-  
+  const emit =
+    PHRASE_ENDINGS.test(globalBuffer.trim()) ||
+    now - globalLastEmit > PHRASE_TIMEOUT_MS;
+
   if (emit) {
     const text = globalBuffer.trim();
     globalBuffer = '';
@@ -223,6 +232,8 @@ export function resetPhraseAggregator(): void {
 /**
  * Create a new phrase aggregator instance
  */
-export function createPhraseAggregator(onEmit: (text: string) => void): PhraseAggregator {
+export function createPhraseAggregator(
+  onEmit: (text: string) => void
+): PhraseAggregator {
   return new PhraseAggregator(onEmit);
 }

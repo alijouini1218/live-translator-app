@@ -37,7 +37,7 @@ export function KeyboardShortcuts({ shortcuts, enabled = true }: KeyboardShortcu
       const isInputActive = activeElement && (
         activeElement.tagName === 'INPUT' || 
         activeElement.tagName === 'TEXTAREA' ||
-        activeElement.contentEditable === 'true'
+        (activeElement as HTMLElement).contentEditable === 'true'
       )
       
       if (!isInputActive) {

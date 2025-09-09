@@ -15,7 +15,7 @@ import { useRealtimeTranslator } from '@/hooks/use-realtime-translator'
 import { useTTS } from '@/hooks/use-tts'
 import { usePTT } from '@/hooks/use-ptt'
 import { useSessionManager } from '@/hooks/use-session-history'
-import { createPhraseAggregator } from '@live-translator/core/phrase-aggregator'
+import { createPhraseAggregator } from '@live-translator/core'
 
 interface EnhancedLiveTranslatorProps {
   className?: string
@@ -214,7 +214,7 @@ export function EnhancedLiveTranslator({ className = '' }: EnhancedLiveTranslato
   useEffect(() => {
     if (!onboardingState.hasSeenOnboarding && micStatus === 'granted') {
       const timer = setTimeout(() => {
-        startOnboarding(translatorOnboardingSteps)
+        startOnboarding(translatorOnboardingSteps as any)
       }, 2000)
       
       return () => clearTimeout(timer)
@@ -239,7 +239,7 @@ export function EnhancedLiveTranslator({ className = '' }: EnhancedLiveTranslato
         dataUsageRef.current = 0
         
         if (historyEnabled) {
-          await startSession(sourceLanguage, targetLanguage, mode)
+          await startSession(sourceLanguage, targetLanguage, mode === 'realtime' ? 'live' : mode as 'live' | 'ptt')
         }
       }
     }

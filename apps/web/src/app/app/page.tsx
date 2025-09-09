@@ -13,7 +13,7 @@ export default async function AppPage() {
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
-    .eq('id', user?.id)
+    .eq('id', user?.id || '')
     .single()
 
   return (
@@ -26,7 +26,7 @@ export default async function AppPage() {
         <p className="mt-4 text-lg text-muted-foreground">
           Real-time voice-to-voice translation with advanced features
         </p>
-        {profile?.plan === 'free' && (
+        {(profile as any)?.plan === 'free' && (
           <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <p className="text-sm text-yellow-800">
               You're on the free plan (10 minutes/day). 

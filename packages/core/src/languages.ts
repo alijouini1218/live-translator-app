@@ -158,9 +158,16 @@ export const DEFAULT_LANGUAGE_PAIRS = [
 /**
  * Check if a language pair is supported
  */
-export function isLanguagePairSupported(source: string, target: string): boolean {
-  const sourceSupported = SUPPORTED_LANGUAGES.some(lang => lang.code === source);
-  const targetSupported = SUPPORTED_LANGUAGES.some(lang => lang.code === target);
+export function isLanguagePairSupported(
+  source: string,
+  target: string
+): boolean {
+  const sourceSupported = SUPPORTED_LANGUAGES.some(
+    lang => lang.code === source
+  );
+  const targetSupported = SUPPORTED_LANGUAGES.some(
+    lang => lang.code === target
+  );
   return sourceSupported && targetSupported && source !== target;
 }
 
@@ -182,7 +189,9 @@ export function getAllVoices(): Record<string, VoiceInfo> {
  * Check if TTS is supported for a language
  */
 export function isTTSSupported(languageCode: string): boolean {
-  return languageCode in languageToVoice && languageToVoice[languageCode] !== '';
+  return (
+    languageCode in languageToVoice && languageToVoice[languageCode] !== ''
+  );
 }
 
 /**

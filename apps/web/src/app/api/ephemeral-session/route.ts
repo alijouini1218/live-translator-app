@@ -38,8 +38,8 @@ export async function GET(request: NextRequest) {
     )
 
     // Create realtime session
-    const session = await openai.realtime.sessions.create({
-      model: process.env.OPENAI_REALTIME_MODEL || 'gpt-4o-realtime-preview',
+    const session = await openai.beta.realtime.sessions.create({
+      model: (process.env.OPENAI_REALTIME_MODEL || 'gpt-4o-realtime-preview') as 'gpt-4o-realtime-preview',
       voice: 'alloy',
       instructions: systemPrompt,
       input_audio_format: 'pcm16',
@@ -59,19 +59,13 @@ export async function GET(request: NextRequest) {
 
     // Log session creation for debugging
     console.log('Created OpenAI Realtime session:', {
-      sessionId: session.id,
+      session,
       sourceLanguage,
       targetLanguage,
       userId: user.id,
     })
 
-    return NextResponse.json({
-      session_id: session.id,
-      client_secret: session.client_secret,
-      expires_at: session.expires_at,
-      voice: session.voice,
-      turn_detection: session.turn_detection,
-    })
+    return NextResponse.json(session)
   } catch (error: any) {
     console.error('Failed to create ephemeral session:', error)
     

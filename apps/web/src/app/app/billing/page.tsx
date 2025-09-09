@@ -16,11 +16,11 @@ export default async function BillingPage() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { data: profile } = await supabase
+  const { data: profile } = user ? await supabase
     .from('profiles')
     .select('*')
-    .eq('id', user?.id)
-    .single()
+    .eq('id', user.id)
+    .single() : { data: null }
 
   return (
     <div className="space-y-8">
@@ -40,10 +40,10 @@ export default async function BillingPage() {
           <div className="flex items-center justify-between">
             <div>
               <h4 className="text-lg font-semibold text-gray-900 capitalize">
-                {profile?.plan || 'Free'} Plan
+                {(profile as any)?.plan || 'Free'} Plan
               </h4>
               <p className="text-sm text-gray-500">
-                {profile?.plan === 'pro' 
+                {(profile as any)?.plan === 'pro' 
                   ? 'Unlimited translations with premium features'
                   : 'Up to 10 minutes per day'
                 }
@@ -51,9 +51,9 @@ export default async function BillingPage() {
             </div>
             <div className="text-right">
               <p className="text-2xl font-bold text-gray-900">
-                {profile?.plan === 'pro' ? '$19.99' : 'Free'}
+                {(profile as any)?.plan === 'pro' ? '$19.99' : 'Free'}
               </p>
-              {profile?.plan === 'pro' && (
+              {(profile as any)?.plan === 'pro' && (
                 <p className="text-sm text-gray-500">per month</p>
               )}
             </div>
@@ -92,7 +92,7 @@ export default async function BillingPage() {
                 Standard voice quality
               </li>
             </ul>
-            {profile?.plan === 'free' ? (
+            {(profile as any)?.plan === 'free' ? (
               <Button disabled className="w-full mt-8">
                 Current Plan
               </Button>
@@ -150,7 +150,7 @@ export default async function BillingPage() {
                 Priority support
               </li>
             </ul>
-            {profile?.plan === 'pro' ? (
+            {(profile as any)?.plan === 'pro' ? (
               <Button disabled className="w-full mt-8">
                 Current Plan
               </Button>
@@ -164,7 +164,7 @@ export default async function BillingPage() {
         </div>
       </div>
 
-      {profile?.plan === 'pro' && (
+      {(profile as any)?.plan === 'pro' && (
         <div className="bg-white rounded-lg shadow">
           <div className="px-6 py-4 border-b border-gray-200">
             <h3 className="text-lg font-medium text-gray-900">Manage Subscription</h3>

@@ -101,7 +101,9 @@ export function measureAsync<T>(
 /**
  * Network quality assessment based on RTT
  */
-export function assessNetworkQuality(rttMs: number): 'excellent' | 'good' | 'fair' | 'poor' {
+export function assessNetworkQuality(
+  rttMs: number
+): 'excellent' | 'good' | 'fair' | 'poor' {
   if (rttMs < 50) return 'excellent';
   if (rttMs < 100) return 'good';
   if (rttMs < 250) return 'fair';

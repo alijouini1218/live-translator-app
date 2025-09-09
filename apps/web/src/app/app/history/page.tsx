@@ -22,7 +22,7 @@ interface SessionFilters {
   dateTo?: Date
   sourceLanguage?: string
   targetLanguage?: string
-  mode?: 'live' | 'ptt' | 'all'
+  mode?: 'live' | 'ptt'
   search?: string
 }
 
@@ -260,7 +260,7 @@ export default function HistoryPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                 value={filters.mode || 'all'}
                 onChange={(e) => updateFilters({ 
-                  mode: e.target.value === 'all' ? 'all' : e.target.value as 'live' | 'ptt'
+                  mode: e.target.value === 'all' ? undefined : e.target.value as 'live' | 'ptt'
                 })}
               >
                 <option value="all">All Modes</option>

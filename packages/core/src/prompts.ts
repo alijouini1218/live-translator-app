@@ -66,7 +66,7 @@ export const PROMPT_TEMPLATES = {
     - Maintaining speaker intent and tone
     - Technical accuracy
   `,
-  
+
   CASUAL_CONVERSATION: (source: string, target: string) => `
     You are interpreting a casual conversation from ${source} to ${target}.
     Focus on:
@@ -75,7 +75,7 @@ export const PROMPT_TEMPLATES = {
     - Colloquialisms and idioms
     - Emotional nuance
   `,
-  
+
   MEDICAL_CONSULTATION: (source: string, target: string) => `
     You are interpreting a medical consultation from ${source} to ${target}.
     Focus on:
@@ -84,7 +84,7 @@ export const PROMPT_TEMPLATES = {
     - Empathetic tone preservation
     - Precise symptom descriptions
   `,
-  
+
   EDUCATIONAL: (source: string, target: string) => `
     You are interpreting educational content from ${source} to ${target}.
     Focus on:
@@ -105,7 +105,11 @@ export function getPromptForContext(
   glossary?: Record<string, string>
 ): string {
   const basePrompt = PROMPT_TEMPLATES[context](sourceLanguage, targetLanguage);
-  const systemPrompt = generateRealtimeSystemPrompt(sourceLanguage, targetLanguage, glossary);
-  
+  const systemPrompt = generateRealtimeSystemPrompt(
+    sourceLanguage,
+    targetLanguage,
+    glossary
+  );
+
   return `${basePrompt}\n\n${systemPrompt}`;
 }

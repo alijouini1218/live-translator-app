@@ -25,7 +25,21 @@
       "Bash(git push:*)",
       "Bash(set SUPABASE_ACCESS_TOKEN=sbp_5c2a51011f8e570e441c8b512e7046eaf097d392)",
       "mcp__vercel__list_deployments",
-      "Bash(pnpm install:*)"
+      "Bash(pnpm install:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(npx eslint:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm build:*)",
+      "Bash(set VERCEL_AUTH_TOKEN=ftWYTcckNL0qUCw3Vi9JEPYB)",
+      "Bash(node:*)",
+      "mcp__supabase__get_project",
+      "mcp__supabase__execute_sql",
+      "Bash(git reset:*)",
+      "WebFetch(domain:vercel.com)",
+      "mcp__vercel__get_access_to_vercel_url",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:platform.openai.com)"
     ],
     "deny": [],
     "ask": []
