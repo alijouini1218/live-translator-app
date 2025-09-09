@@ -55,6 +55,7 @@ pnpm lint                 # Run ESLint across all packages
 pnpm typecheck           # Run TypeScript checks
 pnpm test                # Run test suites
 pnpm clean              # Clean build artifacts
+pnpm setup-check        # Verify environment and Supabase configuration
 ```
 
 ## Environment Variables

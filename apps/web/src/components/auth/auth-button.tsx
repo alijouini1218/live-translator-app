@@ -20,23 +20,65 @@ export function AuthButton({ variant = 'signin' }: AuthButtonProps) {
     if (!email) return
 
     setIsLoading(true)
+    
+    // Check if Supabase is configured
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      console.error('Supabase not configured')
+      alert('Authentication is not configured. Please check environment variables.')
+      setIsLoading(false)
+      return
+    }
+
+    console.log('Attempting authentication for:', email)
+    console.log('Redirect URL:', `${window.location.origin}/auth/callback`)
+
     try {
-      const { error } = await supabase.auth.signInWithOtp({
+      const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       })
 
+      console.log('Auth response:', { data, error })
+
       if (error) {
-        console.error('Auth error:', error.message)
-        alert('Error: ' + error.message)
+        console.error('Auth error details:', {
+          message: error.message,
+          status: error.status,
+          name: error.name
+        })
+        
+        let userMessage = 'Error: ' + error.message
+        
+        if (error.message.includes('Invalid login credentials')) {
+          userMessage = 'Authentication failed. Please check if email authentication is enabled in your Supabase project.'
+        } else if (error.message.includes('Email not confirmed')) {
+          userMessage = 'Please check your email and click the confirmation link first.'
+        } else if (error.message.includes('signups not allowed')) {
+          userMessage = 'New signups are disabled. Please contact support.'
+        }
+        
+        alert(userMessage)
       } else {
-        alert('Check your email for the login link!')
+        console.log('Magic link sent successfully')
+        alert('Check your email for the login link! It may take a few minutes to arrive.')
       }
-    } catch (error) {
-      console.error('Unexpected error:', error)
-      alert('An unexpected error occurred')
+    } catch (error: any) {
+      console.error('Unexpected authentication error:', {
+        message: error?.message || 'Unknown error',
+        name: error?.name,
+        stack: error?.stack
+      })
+      
+      let userMessage = 'An unexpected error occurred'
+      if (error?.message?.includes('Failed to fetch')) {
+        userMessage = 'Network error. Please check your internet connection and try again.'
+      } else if (error?.message?.includes('Invalid URL')) {
+        userMessage = 'Configuration error. Please check Supabase URL setup.'
+      }
+      
+      alert(userMessage)
     } finally {
       setIsLoading(false)
     }
