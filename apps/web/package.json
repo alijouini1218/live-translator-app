@@ -32,7 +32,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "@supabase/supabase-js": "^2.39.0",
-    "@supabase/auth-helpers-nextjs": "^0.8.7",
+    "@supabase/ssr": "^0.1.0",
     "@stripe/stripe-js": "^3.0.0",
     "openai": "^4.28.0",
     "stripe": "^14.0.0",

@@ -39,7 +39,9 @@
       "mcp__vercel__get_access_to_vercel_url",
       "WebSearch",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:platform.openai.com)"
+      "WebFetch(domain:platform.openai.com)",
+      "Bash(vercel logs:*)",
+      "mcp__vercel__web_fetch_vercel_url"
     ],
     "deny": [],
     "ask": []
