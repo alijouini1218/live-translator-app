@@ -1,12 +1,6 @@
 {
-  "buildCommand": "cd apps/web && pnpm build",
-  "installCommand": "corepack enable && pnpm install --no-frozen-lockfile",
+  "buildCommand": "pnpm build",
+  "installCommand": "corepack enable pnpm && pnpm install --no-frozen-lockfile",
   "outputDirectory": "apps/web/.next",
-  "framework": "nextjs",
-  "functions": {
-    "apps/web/src/app/api/*/route.ts": {
-      "runtime": "edge"
-    }
-  },
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD ."
+  "framework": "nextjs"
 }
