@@ -2,61 +2,6 @@
  * Utility functions for the Live Translator core package
  */
 
-/**
- * Phrase aggregator for TTS optimization
- * Reduces noisy partial translations by waiting for sentence boundaries
- */
-export class PhraseAggregator {
-  private buffer = '';
-  private lastEmit = 0;
-  private readonly SENTENCE_ENDINGS = /[.!?…]$/;
-  private readonly MAX_WAIT_MS = 900;
-
-  /**
-   * Process partial transcript and emit complete phrases
-   */
-  processPartial(
-    partialText: string,
-    onPhraseComplete: (phrase: string) => void
-  ): void {
-    this.buffer += partialText;
-    const now = performance.now();
-    
-    const shouldEmit = 
-      this.SENTENCE_ENDINGS.test(this.buffer.trim()) || 
-      now - this.lastEmit > this.MAX_WAIT_MS;
-    
-    if (shouldEmit) {
-      const phrase = this.buffer.trim();
-      this.buffer = '';
-      this.lastEmit = now;
-      
-      if (phrase) {
-        onPhraseComplete(phrase);
-      }
-    }
-  }
-
-  /**
-   * Force emit current buffer (e.g., on session end)
-   */
-  flush(onPhraseComplete: (phrase: string) => void): void {
-    const phrase = this.buffer.trim();
-    if (phrase) {
-      onPhraseComplete(phrase);
-    }
-    this.buffer = '';
-    this.lastEmit = performance.now();
-  }
-
-  /**
-   * Clear the buffer
-   */
-  clear(): void {
-    this.buffer = '';
-    this.lastEmit = performance.now();
-  }
-}
 
 /**
  * Audio processing utilities
@@ -107,18 +52,18 @@ export class AudioUtils {
     fadeOutSamples = 0
   ): Float32Array {
     const result = new Float32Array(buffer);
-    
+
     // Fade in
     for (let i = 0; i < fadeInSamples && i < buffer.length; i++) {
       result[i] *= i / fadeInSamples;
     }
-    
+
     // Fade out
     const start = buffer.length - fadeOutSamples;
     for (let i = start; i < buffer.length; i++) {
       result[i] *= (buffer.length - i) / fadeOutSamples;
     }
-    
+
     return result;
   }
 }
@@ -130,7 +75,7 @@ export class WebRTCUtils {
   /**
    * Create optimized RTCConfiguration for low latency
    */
-  static createRTCConfiguration(): RTCConfiguration {
+  static createRTCConfiguration(): any {
     return {
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
@@ -145,7 +90,7 @@ export class WebRTCUtils {
   /**
    * Create audio-only media constraints for optimal quality
    */
-  static createAudioConstraints(): MediaStreamConstraints {
+  static createAudioConstraints(): any {
     return {
       audio: {
         sampleRate: 16000,
@@ -172,7 +117,7 @@ export class ErrorHandler {
     userMessage: string;
   } {
     const message = error.message.toLowerCase();
-    
+
     if (message.includes('permission') || message.includes('denied')) {
       return {
         category: 'permission',
@@ -180,7 +125,7 @@ export class ErrorHandler {
         userMessage: 'Please allow microphone access to use live translation.',
       };
     }
-    
+
     if (message.includes('network') || message.includes('connection')) {
       return {
         category: 'network',
@@ -188,7 +133,7 @@ export class ErrorHandler {
         userMessage: 'Network issues detected. Switching to push-to-talk mode.',
       };
     }
-    
+
     if (message.includes('device') || message.includes('hardware')) {
       return {
         category: 'hardware',
@@ -196,7 +141,7 @@ export class ErrorHandler {
         userMessage: 'Audio device issues. Switching to push-to-talk mode.',
       };
     }
-    
+
     return {
       category: 'unknown',
       shouldFallback: true,
@@ -216,7 +161,7 @@ export function formatDuration(ms: number): string {
   const seconds = Math.floor(ms / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
-  
+
   if (hours > 0) {
     return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
   } else if (minutes > 0) {
@@ -229,7 +174,7 @@ export function formatDuration(ms: number): string {
 export function estimateCost(characters: number, plan: 'free' | 'pro'): number {
   // Cost estimation in cents
   if (plan === 'free') return 0; // Free tier
-  
+
   // Pro tier: roughly $0.001 per character (example pricing)
   return Math.ceil(characters * 0.1); // 0.1 cents per character
 }
