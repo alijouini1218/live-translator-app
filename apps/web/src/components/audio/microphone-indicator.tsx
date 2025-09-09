@@ -194,11 +194,18 @@ export function MicrophoneIndicator({
 export function useMicrophonePermission() {
   const [permissionStatus, setPermissionStatus] = useState<MicrophoneStatus>('inactive')
   const [stream, setStream] = useState<MediaStream | null>(null)
+  const [isInitialized, setIsInitialized] = useState(false)
 
   const checkPermission = async () => {
     try {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        setPermissionStatus('error')
+        setPermissionStatus('inactive')
+        return false
+      }
+
+      // Check if permissions API is available (not supported in all browsers)
+      if (!navigator.permissions || !navigator.permissions.query) {
+        setPermissionStatus('inactive')
         return false
       }
 
@@ -221,7 +228,8 @@ export function useMicrophonePermission() {
       }
     } catch (error) {
       console.error('Error checking microphone permission:', error)
-      setPermissionStatus('error')
+      // Don't set error status for permission checks, just set inactive
+      setPermissionStatus('inactive')
       return false
     }
   }
@@ -259,8 +267,12 @@ export function useMicrophonePermission() {
   }
 
   useEffect(() => {
-    checkPermission()
-  }, [])
+    if (!isInitialized) {
+      checkPermission().finally(() => {
+        setIsInitialized(true)
+      })
+    }
+  }, [isInitialized])
 
   useEffect(() => {
     return () => {
@@ -276,6 +288,7 @@ export function useMicrophonePermission() {
     checkPermission,
     requestPermission,
     stopStream,
-    activateStream
+    activateStream,
+    isInitialized
   }
 }

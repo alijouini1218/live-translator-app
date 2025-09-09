@@ -18,8 +18,8 @@ interface AppLayoutWrapperProps {
 
 export function AppLayoutWrapper({ children, user, profile }: AppLayoutWrapperProps) {
   const [mounted, setMounted] = useState(false)
-  const { hasConsent } = useConsentStatus()
-  const { status: micStatus, requestPermission } = useMicrophonePermission()
+  const { hasConsent, isInitialized: consentInitialized } = useConsentStatus()
+  const { status: micStatus, requestPermission, isInitialized: micInitialized } = useMicrophonePermission()
   const { shortcuts, addShortcuts } = useKeyboardShortcuts()
 
   useEffect(() => {
@@ -27,20 +27,22 @@ export function AppLayoutWrapper({ children, user, profile }: AppLayoutWrapperPr
   }, [])
 
   useEffect(() => {
-    // Add global keyboard shortcuts
-    const globalShortcuts = [
-      commonShortcuts.help(() => {
-        // Show help overlay - this would be handled by the onboarding context
-        console.log('Show help requested')
-      }),
-      commonShortcuts.escape(() => {
-        // Global escape handler - close any open overlays
-        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
-      })
-    ]
+    // Add global keyboard shortcuts only after component is mounted
+    if (mounted) {
+      const globalShortcuts = [
+        commonShortcuts.help(() => {
+          // Show help overlay - this would be handled by the onboarding context
+          console.log('Show help requested')
+        }),
+        commonShortcuts.escape(() => {
+          // Global escape handler - close any open overlays
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+        })
+      ]
 
-    addShortcuts(globalShortcuts)
-  }, [addShortcuts])
+      addShortcuts(globalShortcuts)
+    }
+  }, [addShortcuts, mounted])
 
   const handleConsentAccept = () => {
     // Handle consent acceptance - could trigger onboarding
@@ -53,8 +55,8 @@ export function AppLayoutWrapper({ children, user, profile }: AppLayoutWrapperPr
     window.location.href = '/'
   }
 
-  if (!mounted) {
-    return null // Avoid hydration issues
+  if (!mounted || !consentInitialized || !micInitialized) {
+    return null // Avoid hydration issues and wait for initialization
   }
 
   return (
@@ -140,20 +142,19 @@ export function AppLayoutWrapper({ children, user, profile }: AppLayoutWrapperPr
   )
 }
 
-// Hook to manage global app state
+// Hook to manage global app state - simplified to avoid cascading updates
 export function useAppState() {
-  const { hasConsent } = useConsentStatus()
-  const { status: micStatus } = useMicrophonePermission()
-  const [appReady, setAppReady] = useState(false)
-
-  useEffect(() => {
-    // App is ready when consent is given and microphone status is determined
-    setAppReady(hasConsent === true && micStatus !== 'requesting')
-  }, [hasConsent, micStatus])
+  const { hasConsent, isInitialized: consentInitialized } = useConsentStatus()
+  const { status: micStatus, isInitialized: micInitialized } = useMicrophonePermission()
+  
+  // Calculate app ready state without additional state updates
+  const appReady = consentInitialized && micInitialized && hasConsent === true && micStatus !== 'requesting'
 
   return {
     appReady,
     hasConsent,
-    micStatus
+    micStatus,
+    consentInitialized,
+    micInitialized
   }
 }

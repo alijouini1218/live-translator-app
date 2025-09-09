@@ -109,25 +109,46 @@ export function ConsentBanner({ onAccept, onDecline }: ConsentBannerProps) {
 // Hook to check consent status
 export function useConsentStatus() {
   const [hasConsent, setHasConsent] = useState<boolean | null>(null)
+  const [isInitialized, setIsInitialized] = useState(false)
 
   useEffect(() => {
-    const consent = localStorage.getItem('live-translator-consent')
-    setHasConsent(consent === 'accepted')
-  }, [])
+    // Only initialize once and prevent multiple runs
+    if (!isInitialized) {
+      try {
+        const consent = localStorage.getItem('live-translator-consent')
+        setHasConsent(consent === 'accepted')
+        setIsInitialized(true)
+      } catch (error) {
+        console.error('Error reading consent from localStorage:', error)
+        setHasConsent(false)
+        setIsInitialized(true)
+      }
+    }
+  }, [isInitialized])
 
   const revokeConsent = () => {
-    localStorage.removeItem('live-translator-consent')
-    localStorage.removeItem('live-translator-consent-timestamp')
-    setHasConsent(null)
+    try {
+      localStorage.removeItem('live-translator-consent')
+      localStorage.removeItem('live-translator-consent-timestamp')
+      setHasConsent(null)
+    } catch (error) {
+      console.error('Error removing consent from localStorage:', error)
+    }
   }
 
   const getConsentTimestamp = () => {
-    return localStorage.getItem('live-translator-consent-timestamp')
+    try {
+      return localStorage.getItem('live-translator-consent-timestamp')
+    } catch (error) {
+      console.error('Error reading consent timestamp:', error)
+      return null
+    }
   }
 
   return {
     hasConsent,
     revokeConsent,
-    getConsentTimestamp
+    getConsentTimestamp,
+    isInitialized
   }
 }
